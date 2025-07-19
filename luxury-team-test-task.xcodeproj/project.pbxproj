@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F35004722E2C000C004A58AD /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F35004712E2C000C004A58AD /* SnapKit */; };
+		F35004752E2C0025004A58AD /* Reusable in Frameworks */ = {isa = PBXBuildFile; productRef = F35004742E2C0025004A58AD /* Reusable */; };
+		F35004782E2C0040004A58AD /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F35004772E2C0040004A58AD /* SDWebImage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		F35004532E2BFE8D004A58AD /* luxury-team-test-task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "luxury-team-test-task.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F35004782E2C0040004A58AD /* SDWebImage in Frameworks */,
+				F35004722E2C000C004A58AD /* SnapKit in Frameworks */,
+				F35004752E2C0025004A58AD /* Reusable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +74,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F35004692E2BFE8F004A58AD /* Build configuration list for PBXNativeTarget "luxury-team-test-task" */;
 			buildPhases = (
+				F35004AF2E2C029C004A58AD /* SwiftLint */,
+				F35004862E2C0275004A58AD /* SwiftGen */,
 				F350044F2E2BFE8D004A58AD /* Sources */,
 				F35004502E2BFE8D004A58AD /* Frameworks */,
 				F35004512E2BFE8D004A58AD /* Resources */,
@@ -78,6 +89,9 @@
 			);
 			name = "luxury-team-test-task";
 			packageProductDependencies = (
+				F35004712E2C000C004A58AD /* SnapKit */,
+				F35004742E2C0025004A58AD /* Reusable */,
+				F35004772E2C0040004A58AD /* SDWebImage */,
 			);
 			productName = "luxury-team-test-task";
 			productReference = F35004532E2BFE8D004A58AD /* luxury-team-test-task.app */;
@@ -107,6 +121,11 @@
 			);
 			mainGroup = F350044A2E2BFE8D004A58AD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F35004702E2C000C004A58AD /* XCRemoteSwiftPackageReference "SnapKit" */,
+				F35004732E2C0025004A58AD /* XCRemoteSwiftPackageReference "Reusable" */,
+				F35004762E2C0040004A58AD /* XCRemoteSwiftPackageReference "SDWebImage" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F35004542E2BFE8D004A58AD /* Products */;
 			projectDirPath = "";
@@ -127,6 +146,47 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		F35004862E2C0275004A58AD /* SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftGen;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"warning: SwiftGen not installed, download it from https://github.com/SwiftGen/SwiftGen\"\nfi\n\n";
+		};
+		F35004AF2E2C029C004A58AD /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]\nthen\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif command -v swiftlint >/dev/null 2>&1\nthen\n    swiftlint --fix\n    swiftlint\nelse\n    echo \"warning: `swiftlint` command not found - See https://github.com/realm/SwiftLint#installation for installation instructions.\"\nfi\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		F350044F2E2BFE8D004A58AD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -146,6 +206,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9D3QPUYX6Q;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "luxury-team-test-task/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -178,6 +239,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9D3QPUYX6Q;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "luxury-team-test-task/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -345,6 +407,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F35004702E2C000C004A58AD /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		F35004732E2C0025004A58AD /* XCRemoteSwiftPackageReference "Reusable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AliSoftware/Reusable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.2;
+			};
+		};
+		F35004762E2C0040004A58AD /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.21.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F35004712E2C000C004A58AD /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F35004702E2C000C004A58AD /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		F35004742E2C0025004A58AD /* Reusable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F35004732E2C0025004A58AD /* XCRemoteSwiftPackageReference "Reusable" */;
+			productName = Reusable;
+		};
+		F35004772E2C0040004A58AD /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F35004762E2C0040004A58AD /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F350044B2E2BFE8D004A58AD /* Project object */;
 }
