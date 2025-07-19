@@ -10,6 +10,28 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum Strings {
+  internal enum Common {
+    internal enum Alert {
+      internal enum Error {
+        /// Error
+        internal static let title = Strings.tr("Localizable", "common.alert.error.title", fallback: "Error")
+      }
+    }
+    internal enum Button {
+      internal enum Cancel {
+        /// Cancel
+        internal static let title = Strings.tr("Localizable", "common.button.cancel.title", fallback: "Cancel")
+      }
+      internal enum Close {
+        /// Close
+        internal static let title = Strings.tr("Localizable", "common.button.close.title", fallback: "Close")
+      }
+      internal enum Ok {
+        /// ОК
+        internal static let title = Strings.tr("Localizable", "common.button.ok.title", fallback: "ОК")
+      }
+    }
+  }
   internal enum List {
     internal enum Search {
       internal enum Empty {

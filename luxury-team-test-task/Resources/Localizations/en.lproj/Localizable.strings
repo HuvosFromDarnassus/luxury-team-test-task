@@ -1,3 +1,10 @@
+// MARK: - Common
+
+"common.button.ok.title" = "ОК";
+"common.button.close.title" = "Close";
+"common.button.cancel.title" = "Cancel";
+"common.alert.error.title" = "Error";
+
 // MARK: - List
 
 "list.tab.stocks" = "Stocks";
