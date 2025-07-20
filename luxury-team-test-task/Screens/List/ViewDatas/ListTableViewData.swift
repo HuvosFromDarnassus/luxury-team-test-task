@@ -10,13 +10,15 @@ import UIKit
 enum ListTableSection: Hashable {
 
     case main
+    case popular
+    case searched
 
 }
 
 enum ListTableItem: Hashable {
 
     case symbol(viewData: ListItemViewData)
-
+    case cellectionRow(items: CollectionRowViewData)
 }
 
 struct ListItemViewData: Hashable {
@@ -29,5 +31,12 @@ struct ListItemViewData: Hashable {
     let change: String
     let changeColor: UIColor
     let cellBackgroundColor: UIColor
+
+}
+
+struct CollectionRowViewData: Hashable {
+
+    let collectionItems: [String]
+    let section: ListTableSection // popular, searched
 
 }

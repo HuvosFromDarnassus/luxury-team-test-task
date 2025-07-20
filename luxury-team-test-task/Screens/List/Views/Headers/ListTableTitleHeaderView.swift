@@ -23,18 +23,25 @@ final class ListTableTitleHeaderView: UIView {
     }()
     private lazy var rightButton: UIButton = {
         let button = UIButton()
-        button.setTitle(Strings.List.Search.Section.more, for: .normal)
         button.setTitleColor(Colors.Common.commonBlack.color, for: .normal)
-        button.titleLabel?.font = Fonts.Montserrat.semiBold.font(size: 11)
         button.backgroundColor = .clear
+        button.isHidden = true
+        button.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
         return button
     }()
+    private var rightButtonAction: (() -> Void)?
 
     // MARK: Initializers
 
-    init(title: String) {
+    init(
+        title: String,
+        rightButtonTitle: String? = nil,
+        rightButtonAction: (() -> Void)? = nil
+    ) {
         titleLabel.text = title
+        self.rightButtonAction = rightButtonAction
         super.init(frame: .zero)
+        setupRightButton(title: rightButtonTitle)
         initialization()
     }
 
@@ -51,14 +58,30 @@ final class ListTableTitleHeaderView: UIView {
         )
 
         titleLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview()
-            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(16)
+            $0.top.equalToSuperview()
             $0.trailing.equalTo(rightButton.snp.leading).inset(-16)
         }
         rightButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview()
-            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
+            $0.top.equalToSuperview()
         }
+    }
+
+    // MARK: Actions
+
+    @objc
+    private func didTapRightButton() {
+        rightButtonAction?()
+    }
+
+    // MARK: Private
+
+    private func setupRightButton(title: String?) {
+        guard let title else { return }
+        rightButton.setTitle(title, for: .normal)
+        rightButton.titleLabel?.font = Fonts.Montserrat.semiBold.font(size: 11)
+        rightButton.isHidden = false
     }
 
 }

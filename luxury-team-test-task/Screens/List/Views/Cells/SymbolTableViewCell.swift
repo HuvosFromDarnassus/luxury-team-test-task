@@ -118,7 +118,8 @@ final class SymbolTableViewCell: BaseTableViewCell {
         }
         containerView.snp.makeConstraints {
             $0.height.equalTo(68)
-            $0.leading.top.trailing.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
     }
 

@@ -19,7 +19,7 @@ protocol ListViewModelProtocol: BaseViewModelProtocol {
 
     // MARK: Callbacks
 
-    var reloadItems: (([ListTableItem]) -> Void)? { get set }
+    var reloadItems: (([ListTableSection], [ListTableItem]) -> Void)? { get set }
 
     // MARK: Events
 
@@ -59,11 +59,12 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
             updateItems()
         }
     }
-    private var items: [ListTableItem] = [] {
+    private var items: ([ListTableSection], [ListTableItem]) = ([], []) {
         didSet {
-            reloadItems?(items)
+            reloadItems?(items.0, items.1)
         }
     }
+    private var searchStarted = false
 
     // MARK: Initializers
 
@@ -81,7 +82,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
 
     // MARK: Callbacks
 
-    var reloadItems: (([ListTableItem]) -> Void)?
+    var reloadItems: (([ListTableSection], [ListTableItem]) -> Void)?
 
     // MARK: Events
 
@@ -95,7 +96,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     }
 
     func didTapItem(at index: Int) {
-        guard case let .symbol(viewData) = items[safe: index] else { return }
+        guard case let .symbol(viewData) = items.1[safe: index] else { return }
 
         let symbol = viewData.symbol
 
@@ -141,14 +142,36 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
             ? allStocks.filter { favoritesSet.contains($0.symbol) }
             : allStocks
 
-        let trimmedQuery = searchQuery?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
-        if !trimmedQuery.isEmpty {
+        guard let trimmedQuery = searchQuery?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() else {
+            fillWithSymbolItems(using: filteredStocks)
+            return
+        }
+
+        if trimmedQuery.isEmpty {
+            fillWithCollectionRows()
+        }
+        else {
             filteredStocks = filteredStocks.filter {
                 $0.symbol.lowercased().contains(trimmedQuery) ||
                 $0.name.lowercased().contains(trimmedQuery)
             }
+            fillWithSymbolItems(using: filteredStocks)
         }
+    }
 
+    private func fillWithCollectionRows() {
+        let items: [ListTableItem] = [
+            .cellectionRow(items: .init(collectionItems: mockPopularRequestsItems[0], section: .popular)),
+            .cellectionRow(items: .init(collectionItems: mockPopularRequestsItems[1], section: .popular)),
+            .cellectionRow(items: .init(collectionItems: mockSearchedForThisItems[0], section: .searched)),
+            .cellectionRow(items: .init(collectionItems: mockSearchedForThisItems[1], section: .searched))
+        ]
+
+        self.items = ([.popular, .searched], items)
+    }
+
+    private func fillWithSymbolItems(using filteredStocks: [StockModel]) {
+        let favoritesSet = Set(favoriteStocks?.map { $0.symbol } ?? [])
         let items: [ListTableItem] = filteredStocks.enumerated().compactMap { index, model in
             return .symbol(viewData: .init(
                 imageURLString: model.logo,
@@ -162,7 +185,19 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
             ))
         }
 
-        self.items = items
+        self.items = ([.main], items)
     }
 
 }
+
+// MARK: - Mock data
+
+fileprivate let mockPopularRequestsItems: [[String]] = [
+    ["Apple", "Amazon", "Google", "Tesla", "Microsoft"],
+    ["First Solar", "Alibaba", "Facebook", "Mastercard"]
+]
+
+fileprivate let mockSearchedForThisItems: [[String]] = [
+    ["Nvidia", "Nokia", "Yandex", "GM", "Microsoft"],
+    ["Baidu", "Intel", "AMD", "Visa"]
+]

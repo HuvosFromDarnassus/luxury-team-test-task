@@ -10,7 +10,7 @@ import UIKit
 protocol SearchTextFieldDelegate: AnyObject {
 
     func searchField(didChange text: String?)
-    func searchFieldDidTapCancelButton()
+    func searchFieldDidTapClearButton()
 
 }
 
@@ -112,7 +112,7 @@ final class SearchBarView: UIView {
         searchTextField.text = nil
         leftButton.setImage(Images.Icons.searchIcon.image, for: .normal)
         rightButton.isHidden = true
-        delegate?.searchFieldDidTapCancelButton()
+        delegate?.searchFieldDidTapClearButton()
     }
 
 }

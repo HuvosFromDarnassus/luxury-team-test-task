@@ -34,15 +34,24 @@ final class ListViewController: BaseViewController {
         tableView.showsHorizontalScrollIndicator = false
         tableView.separatorStyle = .none
         tableView.register(cellType: SymbolTableViewCell.self)
+        tableView.register(cellType: CollectionTableViewCell.self)
         return tableView
     }()
 
     private lazy var dataSource = makeDataSource()
+    private lazy var dataSourceHelper = DiffableDataSourceHelperImplementation<
+        ListTableSection,
+        ListTableItem
+    >(
+        tableDataSource: dataSource
+    )
+    private lazy var cellFactory: ListTableCellFactory = ListTableCellFactoryImplementation(tableView: tableView)
 
     private enum Constants {
         enum Height {
-            static let header: CGFloat = 24
+            static let header: CGFloat = 35
             static let cell: CGFloat = 76
+            static let collectionCell: CGFloat = 48
         }
     }
 
@@ -57,19 +66,22 @@ final class ListViewController: BaseViewController {
         searchBar.snp.makeConstraints {
             $0.height.equalTo(48)
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom).inset(-20)
-            $0.leading.trailing.equalToSuperview().inset(24)
-            $0.bottom.equalToSuperview()
+            $0.leading.trailing.bottom.equalToSuperview()
         }
     }
 
     override func bindViewModel() {
-        viewModel?.reloadItems = { [weak self] items in
+        viewModel?.reloadItems = { [weak self] sections, items in
             guard let self else { return }
-            applySnapshot(items: items, animatingDifferences: false)
+            applySnapshot(
+                sections: sections,
+                items: items,
+                animatingDifferences: false
+            )
         }
 
         viewModel?.start(in: self)
@@ -86,15 +98,21 @@ extension ListViewController {
             guard let self else { return nil }
             switch item {
             case .symbol(let viewData):
-                return createSymbolCell(at: indexPath, viewData: viewData)
+                return cellFactory.createSymbolCell(at: indexPath, viewData: viewData)
+            case .cellectionRow(let viewData):
+                return cellFactory.createCollectionCell(at: indexPath, viewData: viewData)
             }
         }
     }
 
-    private func applySnapshot(items: [ListTableItem], animatingDifferences: Bool = true) {
+    private func applySnapshot(
+        sections: [ListTableSection],
+        items: [ListTableItem],
+        animatingDifferences: Bool = true
+    ) {
         var snapshot = Snapshot()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(items)
+        snapshot.appendSections(sections)
+        append(items, to: &snapshot)
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences) { [weak self] in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
@@ -102,10 +120,24 @@ extension ListViewController {
         }
     }
 
-    private func createSymbolCell(at indexPath: IndexPath, viewData: ListItemViewData) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(for: indexPath, cellType: SymbolTableViewCell.self)
-        cell.bind(viewData: viewData)
-        return cell
+    private func append(_ items: [ListTableItem], to snapshot: inout Snapshot) {
+        let containsSymbol = items.contains {
+            if case .symbol = $0 {
+                return true
+            }
+            return false
+        }
+
+        if containsSymbol {
+            snapshot.appendItems(items, toSection: .main)
+        }
+        else {
+            items.forEach {
+                if case let .cellectionRow(viewData) = $0 {
+                    snapshot.appendItems([$0], toSection: viewData.section)
+                }
+            }
+        }
     }
 
 }
@@ -116,34 +148,62 @@ extension ListViewController: UITableViewDelegate {
 
     /// Headers
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        guard
-            let viewModel,
-            let currentSearchQuery = viewModel.searchQuery,
-            !currentSearchQuery.isEmpty else {
-            return .zero
-        }
-
-        return Constants.Height.header
+        guard let sectionType = dataSourceHelper.getSectionType(for: section) else { return .zero }
+        return shouldShowHeader(for: sectionType) ? Constants.Height.header : .zero
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard
-            let viewModel,
-            let currentSearchQuery = viewModel.searchQuery,
-            !currentSearchQuery.isEmpty else {
+            let sectionType = dataSourceHelper.getSectionType(for: section),
+            shouldShowHeader(for: sectionType) else {
             return nil
         }
 
-        return ListTableTitleHeaderView(title: Strings.List.Search.Section.title)
+        switch sectionType {
+        case .main:
+            return ListTableTitleHeaderView(
+                title: Strings.List.Search.Section.title,
+                rightButtonTitle: Strings.List.Search.Section.more
+            )
+        case .popular:
+            return ListTableTitleHeaderView(title: Strings.List.Search.Empty.Section.popular)
+        case .searched:
+            return ListTableTitleHeaderView(title: Strings.List.Search.Empty.Section.searched)
+        }
     }
 
     /// Cells
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        Constants.Height.cell
+        switch dataSourceHelper.getItem(at: indexPath) {
+        case .symbol:
+            return Constants.Height.cell
+        case .cellectionRow:
+            return Constants.Height.collectionCell
+        case .none:
+            return .zero
+        }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard case .symbol = dataSourceHelper.getItem(at: indexPath) else { return }
         viewModel?.didTapItem(at: indexPath.row)
+    }
+
+    // MARK: Helpers
+
+    private func shouldShowHeader(for section: ListTableSection) -> Bool {
+        switch section {
+        case .main:
+            guard
+                let viewModel,
+                let query = viewModel.searchQuery,
+                !query.isEmpty else {
+                return false
+            }
+            return true
+        default:
+            return true
+        }
     }
 
 }
@@ -156,7 +216,7 @@ extension ListViewController: SearchTextFieldDelegate {
         viewModel?.searchQuery = text
     }
 
-    func searchFieldDidTapCancelButton() {
+    func searchFieldDidTapClearButton() {
         viewModel?.searchQuery = nil
     }
 
