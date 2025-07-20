@@ -34,6 +34,8 @@ internal enum Strings {
   }
   internal enum List {
     internal enum Search {
+      /// Find company or ticker
+      internal static let placeholder = Strings.tr("Localizable", "list.search.placeholder", fallback: "Find company or ticker")
       internal enum Empty {
         internal enum Section {
           /// Show more

@@ -11,7 +11,7 @@ protocol ListViewModelProtocol: BaseViewModelProtocol {
 
     // MARK: Properties
 
-    var searchQuery: String { get set }
+    var searchQuery: String? { get set }
 
     // MARK: Delegates
 
@@ -33,7 +33,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
 
     // MARK: Properties
 
-    var searchQuery: String = "" {
+    var searchQuery: String? {
         didSet {
             updateItems()
         }
@@ -141,11 +141,11 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
             ? allStocks.filter { favoritesSet.contains($0.symbol) }
             : allStocks
 
-        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if !query.isEmpty {
+        let trimmedQuery = searchQuery?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
+        if !trimmedQuery.isEmpty {
             filteredStocks = filteredStocks.filter {
-                $0.symbol.lowercased().contains(query) ||
-                $0.name.lowercased().contains(query)
+                $0.symbol.lowercased().contains(trimmedQuery) ||
+                $0.name.lowercased().contains(trimmedQuery)
             }
         }
 

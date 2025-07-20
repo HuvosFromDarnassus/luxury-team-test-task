@@ -22,6 +22,11 @@ final class ListViewController: BaseViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<ListTableSection, ListTableItem>
 
     var viewModel: ListViewModelProtocol?
+    private lazy var searchBar: SearchBarView = {
+        let view = SearchBarView()
+        view.delegate = self
+        return view
+    }()
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -43,10 +48,18 @@ final class ListViewController: BaseViewController {
     // MARK: BaseViewController
 
     override func setupSubviews() {
-        view.addSubviews(tableView)
+        view.addSubviews(
+            searchBar,
+            tableView
+        )
 
+        searchBar.snp.makeConstraints {
+            $0.height.equalTo(48)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.leading.trailing.equalToSuperview().inset(24)
+        }
         tableView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(searchBar.snp.bottom).inset(-20)
             $0.leading.trailing.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview()
         }
@@ -106,6 +119,20 @@ extension ListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel?.didTapItem(at: indexPath.row)
+    }
+
+}
+
+// MARK: - UITextFieldDelegate
+
+extension ListViewController: SearchTextFieldDelegate {
+
+    func searchField(didChange text: String?) {
+        viewModel?.searchQuery = text
+    }
+
+    func searchFieldDidTapCancelButton() {
+        viewModel?.searchQuery = nil
     }
 
 }
