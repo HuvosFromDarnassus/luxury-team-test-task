@@ -35,16 +35,26 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
 
     var searchQuery: String = "" {
         didSet {
-            // TODO: Implementation
+            updateItems()
         }
     }
 
     /// Services
     private let apiService: APIService
     private let coreDataService: CoreDataService
-
+    ///
     private var viewController: UIViewController?
-    private var stockModels: [StockModel]? {
+    private var filterType: ListFilter = .all {
+        didSet {
+            updateItems()
+        }
+    }
+    private var allStocks: [StockModel]? {
+        didSet {
+            updateItems()
+        }
+    }
+    private var favoriteStocks: [StockModel]? {
         didSet {
             updateItems()
         }
@@ -81,23 +91,41 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     }
 
     func didChangeFilter(type: ListFilter) {
-        // TODO: Implementation
+        filterType = type
     }
 
     func didTapItem(at index: Int) {
-        // TODO: Implementation
+        guard case let .symbol(viewData) = items[safe: index] else { return }
+
+        let symbol = viewData.symbol
+
+        if coreDataService.isFavorite(symbol: symbol) {
+            coreDataService.removeFromFavorites(symbol: symbol)
+        }
+        else {
+            if let model = allStocks?.first(where: { $0.symbol == symbol }) {
+                coreDataService.addToFavorites(model)
+            }
+        }
+
+        favoriteStocks = coreDataService.fetchFavoriteStocks()
     }
 
     // MARK: Private
 
     private func fetchStocks() {
+        favoriteStocks = coreDataService.fetchFavoriteStocks()
+        fetchAllStocks()
+    }
+
+    private func fetchAllStocks() {
         showLoader(in: viewController, coordinatorDelegate: coordinatorDelegate)
         apiService.fetchStocks { [weak self] result in
             guard let self else { return }
             coordinatorDelegate?.hideLoader()
             switch result {
             case .success(let stockModels):
-                self.stockModels = stockModels
+                allStocks = stockModels
             case .failure(let error):
                 LogsService.error(error.localizedDescription)
                 showErrorAlert("", in: viewController, coordinatorDelegate: coordinatorDelegate)
@@ -106,18 +134,32 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     }
 
     private func updateItems() {
-        guard let stockModels else { return }
-        let items: [ListTableItem] = stockModels.enumerated().compactMap { index, model in
+        guard let allStocks else { return }
+
+        let favoritesSet = Set(favoriteStocks?.map { $0.symbol } ?? [])
+        var filteredStocks = filterType == .favorites
+            ? allStocks.filter { favoritesSet.contains($0.symbol) }
+            : allStocks
+
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if !query.isEmpty {
+            filteredStocks = filteredStocks.filter {
+                $0.symbol.lowercased().contains(query) ||
+                $0.name.lowercased().contains(query)
+            }
+        }
+
+        let items: [ListTableItem] = filteredStocks.enumerated().compactMap { index, model in
             return .symbol(viewData: .init(
                 imageURLString: model.logo,
                 symbol: model.symbol,
-                isFavorite: false,
+                isFavorite: favoritesSet.contains(model.symbol),
                 name: model.name,
                 price: "$\(model.price)",
                 change: model.changeInfo().text,
                 changeColor: model.changeInfo().color,
-                cellBackgroundColor: index % 2 == 0 ? .clear : Colors.Common.commonBackground.color)
-            )
+                cellBackgroundColor: index % 2 == 0 ? .clear : Colors.Common.commonBackground.color
+            ))
         }
 
         self.items = items

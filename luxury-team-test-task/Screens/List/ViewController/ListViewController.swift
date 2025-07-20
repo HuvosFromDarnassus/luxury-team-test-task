@@ -55,7 +55,7 @@ final class ListViewController: BaseViewController {
     override func bindViewModel() {
         viewModel?.reloadItems = { [weak self] items in
             guard let self else { return }
-            applySnapshot(items: items)
+            applySnapshot(items: items, animatingDifferences: false)
         }
 
         viewModel?.start(in: self)
