@@ -17,11 +17,20 @@ class BaseViewModel: BaseViewModelProtocol {
         preconditionFailure("This method needs to be overriden by concrete subclass.")
     }
 
-    func showErrorAlert(
-        _ message: String,
-        in viewController: UIViewController,
+    func showLoader(
+        in viewController: UIViewController?,
         coordinatorDelegate: BaseViewModelCoordinatorDelegate?
     ) {
+        guard let viewController else { return }
+        coordinatorDelegate?.showLoader(in: viewController)
+    }
+
+    func showErrorAlert(
+        _ message: String,
+        in viewController: UIViewController?,
+        coordinatorDelegate: BaseViewModelCoordinatorDelegate?
+    ) {
+        guard let viewController else { return }
         let alertViewData = AlertViewData(
             title: Strings.Common.Alert.Error.title,
             text: message,

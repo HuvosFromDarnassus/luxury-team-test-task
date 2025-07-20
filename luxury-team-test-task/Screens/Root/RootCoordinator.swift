@@ -62,7 +62,20 @@ final class RootCoordinator: Coordinator {
 extension RootCoordinator: RootViewModelCoordinatorDelegate {
 
     func startMainFlow() {
-        // TODO: Implementation
+        let listCoordinator = ListCoordinator(rootViewController: rootViewController)
+        listCoordinator.delegate = self
+        addChildCoordinator(listCoordinator)
+        listCoordinator.start()
+    }
+
+}
+
+// MARK: - ListCoordinatorDelegate
+
+extension RootCoordinator: ListCoordinatorDelegate {
+
+    func didFinish(from coordinator: ListCoordinator) {
+        removeChildCoordinator(coordinator)
     }
 
 }

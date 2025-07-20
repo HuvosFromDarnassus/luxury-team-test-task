@@ -5,4 +5,8 @@
 //  Created by Daniel Tvorun on 19/07/2025.
 //
 
-protocol RootViewModelCoordinatorDelegate: BaseViewModelCoordinatorDelegate {}
+protocol RootViewModelCoordinatorDelegate: BaseViewModelCoordinatorDelegate {
+
+    func startMainFlow()
+
+}
