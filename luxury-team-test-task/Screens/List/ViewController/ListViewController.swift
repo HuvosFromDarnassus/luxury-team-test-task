@@ -32,15 +32,16 @@ final class ListViewController: BaseViewController {
         tableView.delegate = self
         tableView.backgroundColor = .clear
         tableView.showsHorizontalScrollIndicator = false
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: Sizes.screenWidth, bottom: 0, right: 0)
+        tableView.separatorStyle = .none
         tableView.register(cellType: SymbolTableViewCell.self)
         return tableView
     }()
 
     private lazy var dataSource = makeDataSource()
 
-    private enum Contents {
+    private enum Constants {
         enum Height {
+            static let header: CGFloat = 24
             static let cell: CGFloat = 76
         }
     }
@@ -113,8 +114,32 @@ extension ListViewController {
 
 extension ListViewController: UITableViewDelegate {
 
+    /// Headers
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        guard
+            let viewModel,
+            let currentSearchQuery = viewModel.searchQuery,
+            !currentSearchQuery.isEmpty else {
+            return .zero
+        }
+
+        return Constants.Height.header
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard
+            let viewModel,
+            let currentSearchQuery = viewModel.searchQuery,
+            !currentSearchQuery.isEmpty else {
+            return nil
+        }
+
+        return ListTableTitleHeaderView(title: Strings.List.Search.Section.title)
+    }
+
+    /// Cells
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        Contents.Height.cell
+        Constants.Height.cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
