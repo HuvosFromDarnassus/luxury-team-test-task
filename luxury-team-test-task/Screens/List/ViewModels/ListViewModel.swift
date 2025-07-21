@@ -20,6 +20,7 @@ protocol ListViewModelProtocol: BaseViewModelProtocol {
     // MARK: Callbacks
 
     var reloadItems: (([ListTableSection], [ListTableItem]) -> Void)? { get set }
+    var updateFilterVisibility: ((Bool) -> Void)? { get set }
 
     // MARK: Events
 
@@ -83,6 +84,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     // MARK: Callbacks
 
     var reloadItems: (([ListTableSection], [ListTableItem]) -> Void)?
+    var updateFilterVisibility: ((Bool) -> Void)?
 
     // MARK: Events
 
@@ -137,6 +139,8 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     private func updateItems() {
         guard let allStocks else { return }
 
+        updateFilterVisibility?(true)
+
         let favoritesSet = Set(favoriteStocks?.map { $0.symbol } ?? [])
         var filteredStocks = filterType == .favorites
             ? allStocks.filter { favoritesSet.contains($0.symbol) }
@@ -149,6 +153,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
 
         if trimmedQuery.isEmpty {
             fillWithCollectionRows()
+            updateFilterVisibility?(false)
         }
         else {
             filteredStocks = filteredStocks.filter {
@@ -156,6 +161,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
                 $0.name.lowercased().contains(trimmedQuery)
             }
             fillWithSymbolItems(using: filteredStocks)
+            updateFilterVisibility?(false)
         }
     }
 
