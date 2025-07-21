@@ -242,6 +242,10 @@ extension ListViewController: UITableViewDelegate {
         }
     }
 
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        view.endEditing(true)
+    }
+
     // MARK: Helpers
 
     private func shouldShowHeader(for section: ListTableSection) -> Bool {
