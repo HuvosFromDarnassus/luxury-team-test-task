@@ -10,7 +10,7 @@ import Foundation
 protocol APIService {
 
     func fetchMockStocks(_ completion: @escaping (Result<[StockModel], any Error>) -> Void)
-    func fetchStocks(limit: Int, completion: @escaping (Result<[StockModel], Error>) -> Void)
+    func fetchStocks(completion: @escaping (Result<[StockModel], Error>) -> Void)
     func imageURL(for symbol: String) -> URL?
 
 }
@@ -28,15 +28,14 @@ extension APIServiceImplementation: APIService {
         }
     }
 
-    func fetchStocks(limit: Int = 100, completion: @escaping (Result<[StockModel], Error>) -> Void) {
+    func fetchStocks(completion: @escaping (Result<[StockModel], Error>) -> Void) {
         guard let url = URL(string: Constants.Endpoint.stocksJSON) else {
             completion(.failure(NetworkError.invalidURL))
             return
         }
 
-        let streamParser = LargeJSONStreamParser(limit: limit, completion: completion)
-        let session = URLSession(configuration: .default, delegate: streamParser, delegateQueue: nil)
-        session.dataTask(with: url).resume()
+        self.completion = completion
+        largeJSONSession.dataTask(with: url).resume()
     }
 
     func imageURL(for symbol: String) -> URL? {

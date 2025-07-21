@@ -9,7 +9,7 @@ import Foundation
 
 final class APIServiceImplementation: NSObject {
 
-    // MARK: Constants
+    // MARK: Properties
 
     enum Constants {
         enum APIkeys {
@@ -20,6 +20,20 @@ final class APIServiceImplementation: NSObject {
             static let getSymbolImage = "https://financialmodelingprep.com/image-stock/"
         }
     }
+
+    lazy var largeJSONSession: URLSession = {
+        let streamParser = LargeJSONStreamParser(limit: limit) { [weak self] result in
+            guard let result else { return }
+            self?.completion?(result)
+        }
+        let session = URLSession(configuration: .default, delegate: streamParser, delegateQueue: nil)
+        return session
+    }()
+    var completion: ((Result<[StockModel], Error>) -> Void)?
+
+    private var limit: Int = 100000
+
+    // MARK: Events
 
     func request<R: Codable>(
         endpoint: String,

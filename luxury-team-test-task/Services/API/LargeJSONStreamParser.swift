@@ -20,7 +20,10 @@ final class LargeJSONStreamParser: NSObject, URLSessionDataDelegate {
 
     // MARK: Initilizers
 
-    init(limit: Int, completion: @escaping (Result<[StockModel], Error>) -> Void) {
+    init(
+        limit: Int,
+        completion: @escaping (Result<[StockModel], Error>?) -> Void
+    ) {
         self.limit = limit
         self.completion = completion
     }

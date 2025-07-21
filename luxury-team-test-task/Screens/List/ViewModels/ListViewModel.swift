@@ -43,7 +43,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     /// Services
     private let apiService: APIService
     private let coreDataService: CoreDataService
-    ///
+
     private var viewController: UIViewController?
     private var filterType: ListFilter = .all {
         didSet {
@@ -65,7 +65,6 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
             reloadItems?(items.0, items.1)
         }
     }
-    private var searchStarted = false
 
     // MARK: Initializers
 
@@ -123,7 +122,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
 
     private func fetchAllStocks() {
         showLoader(in: viewController, coordinatorDelegate: coordinatorDelegate)
-        apiService.fetchStocks(limit: 10000) { [weak self] result in
+        apiService.fetchStocks { [weak self] result in
             guard let self else { return }
             DispatchQueue.main.async {
                 self.coordinatorDelegate?.hideLoader()
