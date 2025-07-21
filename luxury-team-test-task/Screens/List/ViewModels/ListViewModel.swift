@@ -123,9 +123,11 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
 
     private func fetchAllStocks() {
         showLoader(in: viewController, coordinatorDelegate: coordinatorDelegate)
-        apiService.fetchStocks { [weak self] result in
+        apiService.fetchStocks(limit: 10000) { [weak self] result in
             guard let self else { return }
-            coordinatorDelegate?.hideLoader()
+            DispatchQueue.main.async {
+                self.coordinatorDelegate?.hideLoader()
+            }
             switch result {
             case .success(let stockModels):
                 allStocks = stockModels
@@ -180,7 +182,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
         let favoritesSet = Set(favoriteStocks?.map { $0.symbol } ?? [])
         let items: [ListTableItem] = filteredStocks.enumerated().compactMap { index, model in
             return .symbol(viewData: .init(
-                imageURLString: model.logo,
+                imageURL: apiService.imageURL(for: model.symbol),
                 symbol: model.symbol,
                 isFavorite: favoritesSet.contains(model.symbol),
                 name: model.name,

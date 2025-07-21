@@ -7,13 +7,17 @@
 
 import Foundation
 
-final class APIServiceImplementation {
+final class APIServiceImplementation: NSObject {
 
-    // MARK: Properties
+    // MARK: Constants
 
     enum Constants {
+        enum APIkeys {
+            static let key = "RidMALI8B2P13jY3H3D4ey0suWnDMdlN"
+        }
         enum Endpoint {
-            static let stocksJSON = "https://mustdev.ru/api/stocks.json"
+            static let stocksJSON = "https://financialmodelingprep.com/api/v3/symbol/NASDAQ?apikey=\(Constants.APIkeys.key)"
+            static let getSymbolImage = "https://financialmodelingprep.com/image-stock/"
         }
     }
 
@@ -31,14 +35,16 @@ final class APIServiceImplementation {
             }
 
             var request = URLRequest(url: url)
-            request.httpMethod = "POST"
+            request.httpMethod = "GET"
             request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
 
             for (key, value) in headers {
                 request.setValue(value, forHTTPHeaderField: key)
             }
 
-            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+            if !body.isEmpty {
+                request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+            }
 
             LogsService.network(body, data: nil)
 

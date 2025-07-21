@@ -33,8 +33,7 @@ extension CoreDataServiceImplementation: CoreDataService {
         favorite.name = stock.name
         favorite.price = stock.price
         favorite.change = stock.change
-        favorite.changePercent = stock.changePercent
-        favorite.logo = stock.logo
+        favorite.changesPercentage = stock.changesPercentage
 
         saveContext()
     }

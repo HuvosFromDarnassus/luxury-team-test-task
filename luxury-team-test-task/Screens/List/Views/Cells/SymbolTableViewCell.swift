@@ -16,7 +16,7 @@ final class SymbolTableViewCell: BaseTableViewCell {
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = Colors.Common.commonGray.color
+        imageView.backgroundColor = Colors.Common.commonGray.color.withAlphaComponent(0.3)
         imageView.layer.cornerRadius = 12
         imageView.clipsToBounds = true
         return imageView
@@ -149,7 +149,7 @@ final class SymbolTableViewCell: BaseTableViewCell {
     }
 
     private func setupImages(with viewData: ListItemViewData) {
-        if let imageURL = URL(string: viewData.imageURLString) {
+        if let imageURL = viewData.imageURL {
             logoImageView.sd_setImage(with: imageURL)
         }
         favoritesImageView.image = viewData.isFavorite ? Images.Cell.favoriteActive.image : Images.Cell.favoriteInactive.image
