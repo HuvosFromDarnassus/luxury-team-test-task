@@ -15,8 +15,7 @@ struct StockModel: Codable, Hashable {
     let name: String
     let price: Double
     let change: Double
-    let changePercent: Double
-    let logo: String
+    let changesPercentage: Double
 
     // MARK: Initializers
 
@@ -25,15 +24,13 @@ struct StockModel: Codable, Hashable {
         name: String,
         price: Double,
         change: Double,
-        changePercent: Double,
-        logo: String
+        changesPercentage: Double,
     ) {
         self.symbol = symbol
         self.name = name
         self.price = price
         self.change = change
-        self.changePercent = changePercent
-        self.logo = logo
+        self.changesPercentage = changesPercentage
     }
 
     init(from entity: FavoriteStock) {
@@ -41,8 +38,7 @@ struct StockModel: Codable, Hashable {
         self.name = entity.name ?? ""
         self.price = entity.price
         self.change = entity.change
-        self.changePercent = entity.changePercent
-        self.logo = entity.logo ?? ""
+        self.changesPercentage = entity.changesPercentage
     }
 
     // MARK: Helpers
@@ -50,7 +46,7 @@ struct StockModel: Codable, Hashable {
     func changeInfo() -> (text: String, color: UIColor) {
         let sign = change >= 0 ? "+" : "-"
         let absChange = abs(change)
-        let absPercent = abs(changePercent)
+        let absPercent = abs(changesPercentage)
 
         let formattedText = String(format: "%@$%.2f (%.2f%%)", sign, absChange, absPercent).replacingOccurrences(of: ".", with: ",")
         let color: UIColor = change >= 0 ? .systemGreen : .systemRed

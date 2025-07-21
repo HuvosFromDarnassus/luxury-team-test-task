@@ -23,7 +23,7 @@ enum ListTableItem: Hashable {
 
 struct ListItemViewData: Hashable {
 
-    let imageURLString: String
+    let imageURL: URL?
     let symbol: String
     let isFavorite: Bool
     let name: String
