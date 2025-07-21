@@ -34,15 +34,21 @@ internal enum Strings {
   }
   internal enum List {
     internal enum Search {
+      /// Find company or ticker
+      internal static let placeholder = Strings.tr("Localizable", "list.search.placeholder", fallback: "Find company or ticker")
       internal enum Empty {
         internal enum Section {
-          /// Show more
-          internal static let more = Strings.tr("Localizable", "list.search.empty.section.more", fallback: "Show more")
           /// Popular requests
           internal static let popular = Strings.tr("Localizable", "list.search.empty.section.popular", fallback: "Popular requests")
           /// You’ve searched for this
           internal static let searched = Strings.tr("Localizable", "list.search.empty.section.searched", fallback: "You’ve searched for this")
         }
+      }
+      internal enum Section {
+        /// Show more
+        internal static let more = Strings.tr("Localizable", "list.search.section.more", fallback: "Show more")
+        /// Stocks
+        internal static let title = Strings.tr("Localizable", "list.search.section.title", fallback: "Stocks")
       }
     }
     internal enum Tab {

@@ -12,7 +12,7 @@ protocol CoreDataService {
     func addToFavorites(_ stock: StockModel)
     func removeFromFavorites(symbol: String)
     func isFavorite(symbol: String) -> Bool
-    func getAllFavorites() -> [StockModel]
+    func fetchFavoriteStocks() -> [StockModel]
 
 }
 
@@ -69,7 +69,7 @@ extension CoreDataServiceImplementation: CoreDataService {
         return (try? context.count(for: request)) ?? 0 > 0
     }
 
-    func getAllFavorites() -> [StockModel] {
+    func fetchFavoriteStocks() -> [StockModel] {
         LogsService.warning("Attempt to get all favorites")
 
         let request: NSFetchRequest<FavoriteStock> = FavoriteStock.fetchRequest()

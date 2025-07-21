@@ -34,6 +34,7 @@ final class RootViewModel: BaseViewModel, RootViewModelProtocol {
     // MARK: Events
 
     override func start() {
+        coordinatorDelegate?.startMainFlow()
         updateAppLaunchedStatus()
     }
 

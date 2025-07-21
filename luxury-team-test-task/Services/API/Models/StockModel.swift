@@ -5,9 +5,11 @@
 //  Created by Daniel Tvorun on 19/07/2025.
 //
 
-import Foundation
+import UIKit
 
 struct StockModel: Codable, Hashable {
+
+    // MARK: Properties
 
     let symbol: String
     let name: String
@@ -15,6 +17,8 @@ struct StockModel: Codable, Hashable {
     let change: Double
     let changePercent: Double
     let logo: String
+
+    // MARK: Initializers
 
     init(
         symbol: String,
@@ -39,6 +43,19 @@ struct StockModel: Codable, Hashable {
         self.change = entity.change
         self.changePercent = entity.changePercent
         self.logo = entity.logo ?? ""
+    }
+
+    // MARK: Helpers
+
+    func changeInfo() -> (text: String, color: UIColor) {
+        let sign = change >= 0 ? "+" : "-"
+        let absChange = abs(change)
+        let absPercent = abs(changePercent)
+
+        let formattedText = String(format: "%@$%.2f (%.2f%%)", sign, absChange, absPercent).replacingOccurrences(of: ".", with: ",")
+        let color: UIColor = change >= 0 ? .systemGreen : .systemRed
+
+        return (formattedText, color)
     }
 
 }

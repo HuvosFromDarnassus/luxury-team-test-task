@@ -14,6 +14,7 @@ class Coordinator {
     // MARK: Properties
 
     private(set) var childCoordinators: [Coordinator] = []
+    private var loaderView: UIView?
 
     // MARK: Lifecycle
 
@@ -99,6 +100,32 @@ class Coordinator {
         controller.present(alertController, animated: true, completion: nil)
     }
 
+    func showLoader(in viewController: UIViewController) {
+        guard loaderView == nil else { return }
+
+        let overlay = UIView()
+        overlay.backgroundColor = UIColor.white.withAlphaComponent(0.6)
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.startAnimating()
+
+        overlay.addSubview(activityIndicator)
+        viewController.view.addSubview(overlay)
+
+        overlay.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+
+        loaderView = overlay
+    }
+
+    func hideLoader() {
+        loaderView?.removeFromSuperview()
+        loaderView = nil
+    }
+
     func close(from controller: UIViewController, finish: Bool = false, _ completion: (() -> Void)? = nil) {
         if let navigationController = controller.navigationController, navigationController.viewControllers.count > 1 {
             let _ = navigationController.popViewController(animated: true) {
@@ -123,9 +150,11 @@ class Coordinator {
 // MARK: - Equatable
 
 extension Coordinator: Equatable {
+
     static func == (lhs: Coordinator, rhs: Coordinator) -> Bool {
         lhs === rhs
     }
+
 }
 
 extension Coordinator {

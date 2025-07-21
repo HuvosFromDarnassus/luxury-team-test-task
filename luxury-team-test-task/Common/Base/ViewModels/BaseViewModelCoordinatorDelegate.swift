@@ -15,6 +15,8 @@ protocol BaseViewModelCoordinatorDelegate: AnyObject {
         items: [(title: String, action: (() -> Void))],
         from controller: UIViewController
     )
+    func showLoader(in viewController: UIViewController)
+    func hideLoader()
     func close(from controller: UIViewController, finish: Bool, _ completion: (() -> Void)?)
 
 }

@@ -9,6 +9,8 @@
 
 "list.tab.stocks" = "Stocks";
 "list.tab.favourite" = "Favourite";
+"list.search.placeholder" = "Find company or ticker";
+"list.search.section.title" = "Stocks";
+"list.search.section.more" = "Show more";
 "list.search.empty.section.popular" = "Popular requests";
 "list.search.empty.section.searched" = "You’ve searched for this";
-"list.search.empty.section.more" = "Show more";
