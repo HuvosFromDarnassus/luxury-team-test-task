@@ -33,6 +33,12 @@ internal enum Strings {
     }
   }
   internal enum List {
+    internal enum Alert {
+      internal enum Error {
+        /// There was an error loading. Please try again later.
+        internal static let message = Strings.tr("Localizable", "list.alert.error.message", fallback: "There was an error loading. Please try again later.")
+      }
+    }
     internal enum Search {
       /// Find company or ticker
       internal static let placeholder = Strings.tr("Localizable", "list.search.placeholder", fallback: "Find company or ticker")

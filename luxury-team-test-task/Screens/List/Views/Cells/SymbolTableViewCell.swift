@@ -43,7 +43,7 @@ final class SymbolTableViewCell: BaseTableViewCell {
         label.numberOfLines = 1
         label.textAlignment = .left
         label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.5
+        label.minimumScaleFactor = 0.7
         return label
     }()
     private let priceLabel: UILabel = {
@@ -61,7 +61,7 @@ final class SymbolTableViewCell: BaseTableViewCell {
         label.font = Fonts.Montserrat.semiBold.font(size: 12)
         label.textColor = Colors.Status.statusGreen.color
         label.numberOfLines = 1
-        label.textAlignment = .center
+        label.textAlignment = .right
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.5
         return label
@@ -98,6 +98,7 @@ final class SymbolTableViewCell: BaseTableViewCell {
             $0.trailing.equalToSuperview().inset(17)
         }
         changeLabel.snp.makeConstraints {
+            $0.width.greaterThanOrEqualTo(100)
             $0.bottom.equalToSuperview().inset(14)
             $0.trailing.equalToSuperview().inset(17)
         }
@@ -114,7 +115,7 @@ final class SymbolTableViewCell: BaseTableViewCell {
         nameLabel.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(14)
             $0.leading.equalTo(logoImageView.snp.trailing).offset(12)
-            $0.trailing.lessThanOrEqualTo(changeLabel.snp.leading).offset(-8)
+            $0.trailing.lessThanOrEqualTo(changeLabel.snp.leading).offset(-2)
         }
         containerView.snp.makeConstraints {
             $0.height.equalTo(68)

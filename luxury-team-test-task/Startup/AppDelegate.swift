@@ -46,8 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: Private
 
     private func startup() {
-        UIApplication.shared.isIdleTimerDisabled = true
-        UIDevice.current.isBatteryMonitoringEnabled = true
         window = UIWindow()
         appCoordinator = AppCoordinator(window: window)
         appCoordinator.start()

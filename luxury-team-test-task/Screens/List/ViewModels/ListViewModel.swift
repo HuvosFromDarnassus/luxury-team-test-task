@@ -47,6 +47,7 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     private var viewController: UIViewController?
     private var filterType: ListFilter = .all {
         didSet {
+            guard filterType != oldValue else { return }
             updateItems()
         }
     }
@@ -93,19 +94,20 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
     }
 
     func didChangeFilter(type: ListFilter) {
+        FeedbackGeneratorHelper.run(.impactLight)
         filterType = type
     }
 
     func didTapItem(at index: Int) {
         guard case let .symbol(viewData) = items.1[safe: index] else { return }
 
-        let symbol = viewData.symbol
+        FeedbackGeneratorHelper.run(.impactSoft)
 
-        if coreDataService.isFavorite(symbol: symbol) {
-            coreDataService.removeFromFavorites(symbol: symbol)
+        if coreDataService.isFavorite(symbol: viewData.symbol) {
+            coreDataService.removeFromFavorites(symbol: viewData.symbol)
         }
         else {
-            if let model = allStocks?.first(where: { $0.symbol == symbol }) {
+            if let model = allStocks?.first(where: { $0.symbol == viewData.symbol }) {
                 coreDataService.addToFavorites(model)
             }
         }
@@ -129,10 +131,18 @@ final class ListViewModel: BaseViewModel, ListViewModelProtocol {
             }
             switch result {
             case .success(let stockModels):
+                FeedbackGeneratorHelper.run(.impactLight)
                 allStocks = stockModels
             case .failure(let error):
                 LogsService.error(error.localizedDescription)
-                showErrorAlert("", in: viewController, coordinatorDelegate: coordinatorDelegate)
+                FeedbackGeneratorHelper.run(.notificationError)
+                DispatchQueue.main.async {
+                    self.showErrorAlert(
+                        Strings.List.Alert.Error.message,
+                        in: self.viewController,
+                        coordinatorDelegate: self.coordinatorDelegate
+                    )
+                }
             }
         }
     }

@@ -290,6 +290,18 @@ extension ListViewController: SearchTextFieldDelegate, ListFilterDelegate {
 
     func listFilter(didChange filter: ListFilter) {
         viewModel?.didChangeFilter(type: filter)
+        scrollTableToTop()
+    }
+
+    // MARK: Private
+
+    private func scrollTableToTop() {
+        if tableView.numberOfSections > 0, tableView.numberOfRows(inSection: 0) > 0 {
+            let indexPath = IndexPath(row: 0, section: 0)
+            DispatchQueue.main.async {
+                self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+            }
+        }
     }
 
 }
